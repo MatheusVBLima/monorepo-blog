@@ -1,0 +1,12 @@
+{
+  "name": "blog-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:blog": "pnpm --filter blog dev",
+    "dev:admin": "pnpm --filter admin-blog dev",
+    "build:blog": "pnpm --filter blog build",
+    "build:admin": "pnpm --filter admin-blog build",
+    "dev:all": "pnpm -r --parallel dev"
+  }
+} 
