@@ -19,7 +19,7 @@ export default clerkMiddleware(async (auth, req) => {
   }
 
   if (userId && isPublicRoute(req)) {
-    return NextResponse.redirect(new URL("/admin/create-post", req.url))
+    return NextResponse.redirect(new URL("/admin", req.url))
   }
 
   return res
