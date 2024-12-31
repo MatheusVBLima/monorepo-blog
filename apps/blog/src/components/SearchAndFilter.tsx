@@ -1,8 +1,9 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import type { Area } from "@/lib/supabase/database.types"
+import { BookText, Search, Terminal } from 'lucide-react'
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useState } from "react"
 import { useDebouncedCallback } from "use-debounce"
@@ -34,11 +35,10 @@ export function SearchAndFilter() {
     [searchParams]
   )
 
-  // Debounce the search to avoid too many URL updates while typing
   const debouncedUpdateSearchParams = useDebouncedCallback((value: string) => {
-    const query = createQueryString({ 
+    const query = createQueryString({
       search: value || null,
-      area: selectedArea 
+      area: selectedArea,
     })
     router.push(`${pathname}?${query}`)
   }, 300)
@@ -48,42 +48,47 @@ export function SearchAndFilter() {
     debouncedUpdateSearchParams(value)
   }
 
-  const handleAreaFilter = (area: Area) => {
-    setSelectedArea(selectedArea === area ? null : area)
+  const handleAreaFilter = (area: Area | null) => {
+    setSelectedArea(area)
     const query = createQueryString({
-      area: selectedArea === area ? null : area,
+      area: area,
       search: search || null,
     })
     router.push(`${pathname}?${query}`)
   }
 
   return (
-    <div className="mb-8">
-      <div className="flex gap-4 mb-4">
+    <div className="space-y-6">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           type="text"
           placeholder="Search posts..."
           value={search}
           onChange={e => handleSearch(e.target.value)}
-          className="flex-grow"
+          className="pl-9"
         />
       </div>
-      <div className="flex flex-wrap gap-2">
-        <Button
-          variant={selectedArea === "technology" ? "default" : "outline"}
-          size="sm"
-          onClick={() => handleAreaFilter("technology")}
-        >
-          Technology
-        </Button>
-        <Button
-          variant={selectedArea === "literature" ? "default" : "outline"}
-          size="sm"
-          onClick={() => handleAreaFilter("literature")}
-        >
-          Literature
-        </Button>
-      </div>
+      <Tabs
+        value={selectedArea || "all"}
+        onValueChange={value => handleAreaFilter(value === "all" ? null : (value as Area))}
+      >
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="all" className="gap-2">
+            <Search className="h-4 w-4" />
+            <span>All</span>
+          </TabsTrigger>
+          <TabsTrigger value="technology" className="gap-2">
+            <Terminal className="h-4 w-4" />
+            <span>Technology</span>
+          </TabsTrigger>
+          <TabsTrigger value="literature" className="gap-2">
+            <BookText className="h-4 w-4" />
+            <span>Literature</span>
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
     </div>
   )
 }
+

@@ -12,7 +12,11 @@ interface PostEditorProps {
 const PostEditor = ({ onSave, initialContent = "" }: PostEditorProps) => {
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3],
+        },
+      }),
       Image,
       Link.configure({
         openOnClick: false,
@@ -21,73 +25,59 @@ const PostEditor = ({ onSave, initialContent = "" }: PostEditorProps) => {
     editorProps: {
       attributes: {
         class:
-          "min-h-[300px] border rounded-md p-4 focus:outline-none prose prose-slate dark:prose-invert max-w-none",
+          "min-h-[300px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 prose prose-stone dark:prose-invert max-w-none",
       },
     },
     content: initialContent,
     onUpdate: ({ editor }) => {
-      onSave(editor.getHTML())
+      const html = editor.getHTML()
+      onSave(html)
     },
   })
 
-  const MenuBar = () => {
-    if (!editor) return null
+  if (!editor) {
+    return null
+  }
 
-    return (
+  return (
+    <div className="relative w-full rounded-lg border p-4">
       <div className="flex flex-wrap gap-2 p-2 mb-4 border-b">
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              editor.chain().focus().toggleHeading({ level: 1 }).run()
-            }
-            className={
-              editor.isActive("heading", { level: 1 }) ? "bg-slate-200" : ""
-            }
-          >
-            H1
-          </Button>
-        <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              editor.chain().focus().toggleHeading({ level: 2 }).run()
-            }
-            className={
-              editor.isActive("heading", { level: 2 }) ? "bg-slate-200" : ""
-            }
-          >
-            H2
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              editor.chain().focus().toggleHeading({ level: 3 }).run()
-            }
-            className={
-              editor.isActive("heading", { level: 3 }) ? "bg-slate-200" : ""
-            }
-          >
-            H3
-          </Button>
+          {[1, 2, 3].map((level) => (
+            <Button
+              key={level}
+              variant="outline"
+              size="sm"
+              type="button"
+              onClick={() => {
+                editor.chain().focus().toggleHeading({ level: level as 1 | 2 | 3 }).run()
+              }}
+              data-active={editor.isActive('heading', { level })}
+              className="data-[active=true]:bg-secondary"
+            >
+              H{level}
+            </Button>
+          ))}
         </div>
 
         <div className="flex gap-2">
           <Button
             variant="outline"
             size="sm"
+            type="button"
             onClick={() => editor.chain().focus().toggleBold().run()}
-            className={editor.isActive("bold") ? "bg-slate-200" : ""}
+            data-active={editor.isActive('bold')}
+            className="data-[active=true]:bg-secondary"
           >
             Negrito
           </Button>
           <Button
             variant="outline"
             size="sm"
+            type="button"
             onClick={() => editor.chain().focus().toggleItalic().run()}
-            className={editor.isActive("italic") ? "bg-slate-200" : ""}
+            data-active={editor.isActive('italic')}
+            className="data-[active=true]:bg-secondary"
           >
             Itálico
           </Button>
@@ -97,36 +87,29 @@ const PostEditor = ({ onSave, initialContent = "" }: PostEditorProps) => {
           <Button
             variant="outline"
             size="sm"
+            type="button"
             onClick={() => editor.chain().focus().toggleBulletList().run()}
-            className={editor.isActive("bulletList") ? "bg-slate-200" : ""}
+            data-active={editor.isActive('bulletList')}
+            className="data-[active=true]:bg-secondary"
           >
             Lista
           </Button>
           <Button
             variant="outline"
             size="sm"
+            type="button"
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
-            className={editor.isActive("orderedList") ? "bg-slate-200" : ""}
+            data-active={editor.isActive('orderedList')}
+            className="data-[active=true]:bg-secondary"
           >
             Lista Numerada
           </Button>
         </div>
       </div>
-    )
-  }
 
-  return (
-    <div
-      className="relative w-full p-4 border rounded-lg"
-      style={{ zIndex: 0 }}
-    >
-      <MenuBar />
-      <EditorContent
-        editor={editor}
-        className="relative"
-        style={{ zIndex: 0 }}
-      />
-     
+      
+        <EditorContent editor={editor} className="w-full [&_.ProseMirror]:w-full" />
+      
     </div>
   )
 }

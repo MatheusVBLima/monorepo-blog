@@ -68,3 +68,39 @@
     @apply bg-background text-foreground;
   }
 }
+
+.ProseMirror h1 {
+  @apply text-4xl font-bold mb-4;
+}
+
+.ProseMirror h2 {
+  @apply text-3xl font-bold mb-3;
+}
+
+.ProseMirror h3 {
+  @apply text-2xl font-bold mb-2;
+}
+
+.ProseMirror p {
+  @apply mb-4;
+}
+
+.ProseMirror ul {
+  @apply list-disc pl-6 mb-4;
+}
+
+.ProseMirror ol {
+  @apply list-decimal pl-6 mb-4;
+}
+
+.ProseMirror strong {
+  @apply font-bold;
+}
+
+.ProseMirror em {
+  @apply italic;
+}
+
+.ProseMirror > * + * {
+  @apply mt-4;
+}

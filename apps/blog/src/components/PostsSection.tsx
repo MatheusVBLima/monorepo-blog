@@ -1,17 +1,12 @@
 "use client"
 
 import type { Post } from "@/lib/supabase/database.types"
+import { Calendar, Clock, User } from 'lucide-react'
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
 import { useMemo } from "react"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card"
+import { Badge } from "./ui/badge"
+import { Card, CardContent, CardFooter, CardHeader } from "./ui/card"
 
 interface PostsSectionProps {
   initialPosts: Post[]
@@ -22,7 +17,6 @@ export function PostsSection({ initialPosts }: PostsSectionProps) {
   const search = searchParams.get("search")
   const area = searchParams.get("area") as "technology" | "literature" | null
 
-  // Usar useMemo para evitar recálculos desnecessários
   const filteredPosts = useMemo(() => {
     let result = [...initialPosts]
 
@@ -40,32 +34,50 @@ export function PostsSection({ initialPosts }: PostsSectionProps) {
   }, [search, area, initialPosts])
 
   if (filteredPosts.length === 0) {
-    return <div className="text-center text-gray-500">No posts found</div>
+    return (
+      <div className="flex min-h-[200px] items-center justify-center rounded-lg border border-dashed">
+        <p className="text-center text-muted-foreground">No posts found</p>
+      </div>
+    )
   }
 
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {filteredPosts.map((post: Post) => (
         <Link
           key={post.id}
           href={`/posts/${post.id}`}
-          className="transition-transform hover:scale-[1.02]"
+          className="group transition-all hover:no-underline"
         >
-          <Card>
-            <CardHeader>
-              <CardTitle>{post.title}</CardTitle>
-              <CardDescription>{post.description}</CardDescription>
+          <Card className="h-full overflow-hidden border transition-all hover:border-primary hover:shadow-lg">
+            <CardHeader className="space-y-4 pb-4">
+              <Badge  className="w-fit">
+                {post.area}
+              </Badge>
+              <div>
+                <h3 className="line-clamp-2 text-2xl font-bold tracking-tight transition-colors group-hover:text-primary">
+                  {post.title}
+                </h3>
+                <p className="line-clamp-2 text-muted-foreground">
+                  {post.description}
+                </p>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="mt-4 text-sm text-gray-500">
-                <span>By: {post.author}</span>
-                <span className="mx-2">•</span>
-                <span>Area: {post.area}</span>
-                <span className="mx-2">•</span>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <User className="h-4 w-4" />
+                <span>{post.author}</span>
               </div>
             </CardContent>
-            <CardFooter>
-              <span>{new Date(post.created_at).toLocaleDateString()}</span>
+            <CardFooter className="flex items-center py-4 gap-4 border-t bg-muted/50 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <Calendar className="h-4 w-4" />
+                <span>{new Date(post.created_at).toLocaleDateString("pt-BR")}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <Clock className="h-4 w-4" />
+                <span>5 min read</span>
+              </div>
             </CardFooter>
           </Card>
         </Link>

@@ -25,7 +25,7 @@ export default async function Home({ searchParams }: Props) {
   console.log('📄 Página inicial recebeu posts:', posts.length)
 
   return (
-    <main className="container py-8 mx-auto">
+    <main className="container py-8 mx-auto space-y-8">
       <h1 className="mb-8 text-4xl font-bold">Blog</h1>
       <SearchAndFilter />
       <PostsSection initialPosts={posts} />
