@@ -48,7 +48,7 @@ const PostEditor = ({ onSave, initialContent = "" }: PostEditorProps) => {
           >
             H1
           </Button>
-    //    <Button
+        <Button
             variant="outline"
             size="sm"
             onClick={() =>
